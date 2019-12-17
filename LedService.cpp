@@ -1,41 +1,23 @@
 #include "LedService.hpp"
 
-#define SERVICE_UUID           "6E400004-B5A3-F393-E0A9-E50E24DCCA9E"
-#define CHARACTERISTIC_UUID_RX "6E400011-B5A3-F393-E0A9-E50E24DCCA9E"
-#define CHARACTERISTIC_UUID_TX "6E400012-B5A3-F393-E0A9-E50E24DCCA9E"
-
-using std::string;
-
 BLECharacteristic *pCharacteristicTX;
-float txValue = 0;
-const int readPin = 32; // Use GPIO number. See ESP32 board pinouts
-bool isEnabled;
 
-class MyCallbacks: public BLECharacteristicCallbacks {
-  int _pin;
-
-  void onWrite(BLECharacteristic *pCharacteristic) {
-    string rxValue = pCharacteristic->getValue();
+void _ledController(BLECharacteristic *pCharacteristic, int pin) {
+    std::string rxValue = pCharacteristic->getValue();
     if (rxValue.length() > 0) {
-      Serial.print("Valor recebido para o pino " + String(_pin) + ": ");
+      Serial.print("Valor recebido para o pino " + String(pin) + ": ");
       for (int i = 0; i < rxValue.length(); i++) {
         Serial.print(rxValue[i]);
       }
       Serial.println();
 
       if(rxValue == "ledon"){
-        digitalWrite(_pin, HIGH);
+        digitalWrite(pin, HIGH);
       }else if(rxValue == "ledoff"){
-        digitalWrite(_pin, LOW);
+        digitalWrite(pin, LOW);
       }
     }
   }
-
-  public:
-  MyCallbacks(int pin){
-    _pin = pin;
-  }
-};
 
 LedService::LedService(int pin){
     _pin = pin;
@@ -47,18 +29,16 @@ void LedService::init(){
 
   int nServices = 0;
 
-  BLEServer *pServer = EasyBLE::getPServer();
+  BLEServer *pServer = EasyBLE::createServer();
 
   // Create the BLE Service
-  BLEService *pService = pServer->createService(EasyBLE::getNewUUID());
+  BLEService *pService = EasyBLE::createService();
 
-  // Create a BLE Characteristic
-  pCharacteristicTX = pService->createCharacteristic(EasyBLE::getNewUUID(), BLECharacteristic::PROPERTY_READ | BLECharacteristic::PROPERTY_NOTIFY);//TX
-  pCharacteristicTX->addDescriptor(new BLE2902());
+  // Create a BLE Characteristics
+  pCharacteristicTX = EasyBLE::createCharacteristic(pService, "Teste do TX", NULL, BLECharacteristic::PROPERTY_READ | BLECharacteristic::PROPERTY_NOTIFY);
 
-  BLECharacteristic *pCharacteristicRX = pService->createCharacteristic(EasyBLE::getNewUUID(), BLECharacteristic::PROPERTY_WRITE);//RX
-  pCharacteristicRX->setCallbacks(new MyCallbacks(_pin));
-
+  BLECharacteristic *pCharacteristicRX = EasyBLE::createCharacteristic(pService, "Teste do RX",  new EasyBLECallback(_pin, NULL, _ledController), BLECharacteristic::PROPERTY_WRITE);
+  
   // Start the service
   pService->start();
   
