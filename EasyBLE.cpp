@@ -34,16 +34,41 @@ BLEServer *EasyBLE::createServer(){
   return EasyBLE::_pServer;  
 }
 
-BLEService *EasyBLE::createService(){
+void addServiceDescriptors(BLEService *pService, std::string name, std::string description){
+  BLECharacteristic *pCharacteristic = pService->createCharacteristic(EasyBLE::getNewUUID(), BLECharacteristic::PROPERTY_READ);
+  std::string descriptions[] = {name, description};
+  for(std::string description: descriptions){
+    BLEDescriptor *pDescriptor = new BLEDescriptor(EasyBLE::getNewUUID());
+    pDescriptor->setValue(description);
+    pCharacteristic->addDescriptor(pDescriptor);
+  }
+}
+
+BLEService *EasyBLE::createService(std::string name, std::string description){
   BLEService *pService = EasyBLE::_pServer->createService(EasyBLE::getNewUUID());
+  addServiceDescriptors(pService, name, description);
   return pService;
 }
 
-BLECharacteristic *EasyBLE::createCharacteristic(BLEService *pService, std::string descritor, EasyBLECallback *callback, unsigned int properties){
-  BLECharacteristic *pCharacteristic = pService->createCharacteristic(EasyBLE::getNewUUID(), properties);
-  BLEDescriptor *pDescriptor = new BLEDescriptor(EasyBLE::getNewUUID());
-  pDescriptor->setValue(descritor);
-  pCharacteristic->addDescriptor(pDescriptor);
+void addCharacteristicDescriptors(BLECharacteristic *pCharacteristic, std::string name, std::string description, unsigned char type){
+  std::string descriptions[] = {name, description};
+  for(std::string description: descriptions){
+    BLEDescriptor *pDescriptor = new BLEDescriptor(EasyBLE::getNewUUID());
+    pDescriptor->setValue(description);
+    pCharacteristic->addDescriptor(pDescriptor);
+  }
+
+  if(type == EasyBLE::PROPERTY_INPUT || type == EasyBLE::PROPERTY_SWITCH){
+    pCharacteristic->setWriteProperty(true);
+  } else if(type == EasyBLE::PROPERTY_OUTPUT){
+    pCharacteristic->setReadProperty(true);
+    pCharacteristic->setNotifyProperty(true);
+  }
+}
+
+BLECharacteristic *EasyBLE::createCharacteristic(BLEService *pService, std::string name, std::string description, unsigned char type, EasyBLECallback *callback){
+  BLECharacteristic *pCharacteristic = pService->createCharacteristic(EasyBLE::getNewUUID(), 0);
+  addCharacteristicDescriptors(pCharacteristic, name, description, type);
   if(callback != NULL){
     pCharacteristic->setCallbacks(callback);
   }

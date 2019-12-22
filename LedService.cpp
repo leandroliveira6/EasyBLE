@@ -11,37 +11,30 @@ void _ledController(BLECharacteristic *pCharacteristic, int pin) {
       }
       Serial.println();
 
-      if(rxValue == "ledon"){
+      if(rxValue == "on"){
         digitalWrite(pin, HIGH);
-      }else if(rxValue == "ledoff"){
+      }else if(rxValue == "off"){
         digitalWrite(pin, LOW);
       }
     }
   }
 
-LedService::LedService(int pin){
+LedService::LedService(int pin, std::string name, std::string description){
     _pin = pin;
+    _name = name;
+    _description = description;
 };
 
 void LedService::init(){
   pinMode(_pin, OUTPUT);
   digitalWrite(_pin, LOW);
 
-  int nServices = 0;
-
   BLEServer *pServer = EasyBLE::createServer();
+  BLEService *pService = EasyBLE::createService(_name, _description);
+  pCharacteristicTX = EasyBLE::createCharacteristic(pService, "Pino", "Pino do LED", EasyBLE::PROPERTY_OUTPUT, NULL);
+  EasyBLE::createCharacteristic(pService, "Controle", "Controle do LED", EasyBLE::PROPERTY_INPUT, new EasyBLECallback(_pin, NULL, _ledController));
 
-  // Create the BLE Service
-  BLEService *pService = EasyBLE::createService();
-
-  // Create a BLE Characteristics
-  pCharacteristicTX = EasyBLE::createCharacteristic(pService, "Teste do TX", NULL, BLECharacteristic::PROPERTY_READ | BLECharacteristic::PROPERTY_NOTIFY);
-
-  BLECharacteristic *pCharacteristicRX = EasyBLE::createCharacteristic(pService, "Teste do RX",  new EasyBLECallback(_pin, NULL, _ledController), BLECharacteristic::PROPERTY_WRITE);
-  
-  // Start the service
   pService->start();
-  
   Serial.println("Serviço (Pino: "+String(_pin)+") iniciado!");
 };
 

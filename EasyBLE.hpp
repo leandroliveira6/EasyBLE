@@ -9,9 +9,13 @@ class EasyBLE{
   static BLEServer *_pServer;
   
   public:
+  static const unsigned char 	PROPERTY_INPUT = 0; // recebe dados
+  static const unsigned char 	PROPERTY_OUTPUT = 1; // envia dados
+  static const unsigned char 	PROPERTY_SWITCH = 2; // liga ou desliga algo
+
   static BLEServer *createServer();
-  static BLEService *createService();
-  static BLECharacteristic *createCharacteristic(BLEService *pService, std::string descritor, EasyBLECallback *callback, unsigned int properties);
+  static BLEService *createService(std::string name, std::string description);
+  static BLECharacteristic *createCharacteristic(BLEService *pService, std::string name, std::string description, unsigned char type, EasyBLECallback *callback);
   static void changeConnection(bool newConnectionState);
   static bool isConnected();
   static BLEUUID getNewUUID();
