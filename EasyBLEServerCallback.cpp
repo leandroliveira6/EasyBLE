@@ -1,10 +1,12 @@
 #include "EasyBLEServerCallback.hpp"
 #include "EasyBLE.hpp"
 
-void EasyBLEServerCallback::onConnect(BLEServer* pServer) {
+void EasyBLEServerCallback::onConnect(BLEServer *pServer)
+{
     EasyBLE::changeConnection(true);
 };
 
-void EasyBLEServerCallback::onDisconnect(BLEServer* pServer) {
+void EasyBLEServerCallback::onDisconnect(BLEServer *pServer)
+{
     EasyBLE::changeConnection(false);
 }

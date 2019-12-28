@@ -1,21 +1,28 @@
+#pragma once
+
 #include <Arduino.h>
 #include <BLEDevice.h>
+#include <mutex>
 
-#include "EasyBLECallback.hpp"
+#include "EasyBLECharacteristicCallback.hpp"
 
-class EasyBLE{
+class EasyBLE
+{
   static unsigned int _nServices;
   static bool _deviceConnected;
   static BLEServer *_pServer;
-  
-  public:
-  static const unsigned char 	PROPERTY_INPUT = 0; // recebe dados
-  static const unsigned char 	PROPERTY_OUTPUT = 1; // envia dados
-  static const unsigned char 	PROPERTY_SWITCH = 2; // liga ou desliga algo
+  static std::mutex _mutex;
+
+public:
+  static const short int PROPERTY_INPUT = 0;  // recebe dados
+  static const short int PROPERTY_OUTPUT = 1; // envia dados
+  static const short int PROPERTY_SWITCH = 2; // liga ou desliga algo
 
   static BLEServer *createServer();
   static BLEService *createService(std::string name, std::string description);
-  static BLECharacteristic *createCharacteristic(BLEService *pService, std::string name, std::string description, unsigned char type, EasyBLECallback *callback);
+  static BLECharacteristic *createCharacteristic(BLEService *pService, std::string name, std::string description, short int type, EasyBLECharacteristicCallback *callback);
+  static std::string readValue(BLECharacteristic *pCharacteristic);
+  static void writeValue(BLECharacteristic *pCharacteristic, std::string value);
   static void changeConnection(bool newConnectionState);
   static bool isConnected();
   static BLEUUID getNewUUID();

@@ -4,91 +4,125 @@
 unsigned int EasyBLE::_nServices;
 bool EasyBLE::_deviceConnected;
 BLEServer *EasyBLE::_pServer;
+std::mutex EasyBLE::_mutex;
 
-class MyServerCallbacks: public BLEServerCallbacks {
-  void onConnect(BLEServer* pServer) {
-    Serial.println("Dispositivo conectado!");
-    EasyBLE::changeConnection(true);
-  };
-
-  void onDisconnect(BLEServer* pServer) {
-    Serial.println("Dispositivo desconectado!");
-    EasyBLE::changeConnection(false);
-  }
-};
-
-BLEServer *EasyBLE::createServer(){
-  if(EasyBLE::_pServer == NULL){
+BLEServer *EasyBLE::createServer()
+{
+  if (EasyBLE::_pServer == NULL)
+  {
     EasyBLE::_nServices = 0;
 
-    // Create the BLE Device
     BLEDevice::init("EasyBLE");
-    
-    // Create the BLE Server
+
     EasyBLE::_pServer = BLEDevice::createServer();
     EasyBLE::_pServer->setCallbacks(new EasyBLEServerCallback());
 
-    // Start advertising
     EasyBLE::_pServer->startAdvertising();
   }
-  return EasyBLE::_pServer;  
+  return EasyBLE::_pServer;
 }
 
-void addServiceDescriptors(BLEService *pService, std::string name, std::string description){
-  BLECharacteristic *pCharacteristic = pService->createCharacteristic(EasyBLE::getNewUUID(), BLECharacteristic::PROPERTY_READ);
-  std::string descriptions[] = {name, description};
-  for(std::string description: descriptions){
+std::string checkText(std::string text)
+{
+  if (!text.empty())
+  {
+    if (text.length() > 100)
+    {
+      return text.substr(0, 100);
+    }
+    return text;
+  }
+  return "Valor não informado";
+}
+
+void addCharacteristicDetails(BLECharacteristic *pCharacteristic, std::string name, std::string description)
+{
+  std::string values[] = {name, description};
+
+  for (std::string value : values)
+  {
     BLEDescriptor *pDescriptor = new BLEDescriptor(EasyBLE::getNewUUID());
-    pDescriptor->setValue(description);
+    pDescriptor->setValue(checkText(value));
     pCharacteristic->addDescriptor(pDescriptor);
   }
 }
 
-BLEService *EasyBLE::createService(std::string name, std::string description){
+BLEService *EasyBLE::createService(std::string name, std::string description)
+{
   BLEService *pService = EasyBLE::_pServer->createService(EasyBLE::getNewUUID());
-  addServiceDescriptors(pService, name, description);
+  BLECharacteristic *pCharacteristic = pService->createCharacteristic(EasyBLE::getNewUUID(), BLECharacteristic::PROPERTY_READ);
+  addCharacteristicDetails(pCharacteristic, name, description);
   return pService;
 }
 
-void addCharacteristicDescriptors(BLECharacteristic *pCharacteristic, std::string name, std::string description, unsigned char type){
-  std::string descriptions[] = {name, description};
-  for(std::string description: descriptions){
-    BLEDescriptor *pDescriptor = new BLEDescriptor(EasyBLE::getNewUUID());
-    pDescriptor->setValue(description);
-    pCharacteristic->addDescriptor(pDescriptor);
-  }
+BLECharacteristic *EasyBLE::createCharacteristic(BLEService *pService, std::string name, std::string description, short int type, EasyBLECharacteristicCallback *callback)
+{
+  BLECharacteristic *pCharacteristic = pService->createCharacteristic(EasyBLE::getNewUUID(), 0);
+  addCharacteristicDetails(pCharacteristic, name, description);
 
-  if(type == EasyBLE::PROPERTY_INPUT || type == EasyBLE::PROPERTY_SWITCH){
+  if (type == EasyBLE::PROPERTY_INPUT)
+  {
+    pCharacteristic->setWriteNoResponseProperty(true);
+  }
+  else if (type == EasyBLE::PROPERTY_SWITCH)
+  {
     pCharacteristic->setWriteProperty(true);
-  } else if(type == EasyBLE::PROPERTY_OUTPUT){
+  }
+  else if (type == EasyBLE::PROPERTY_OUTPUT)
+  {
     pCharacteristic->setReadProperty(true);
     pCharacteristic->setNotifyProperty(true);
   }
-}
 
-BLECharacteristic *EasyBLE::createCharacteristic(BLEService *pService, std::string name, std::string description, unsigned char type, EasyBLECallback *callback){
-  BLECharacteristic *pCharacteristic = pService->createCharacteristic(EasyBLE::getNewUUID(), 0);
-  addCharacteristicDescriptors(pCharacteristic, name, description, type);
-  if(callback != NULL){
+  if (callback != NULL)
+  {
     pCharacteristic->setCallbacks(callback);
   }
   return pCharacteristic;
 }
 
-bool EasyBLE::isConnected(){
+bool EasyBLE::isConnected()
+{
   return EasyBLE::_deviceConnected;
 }
 
-void EasyBLE::changeConnection(bool newConnectionState){
+void EasyBLE::changeConnection(bool newConnectionState)
+{
   EasyBLE::_deviceConnected = newConnectionState;
-  if(EasyBLE::isConnected()){
-    Serial.println("Dispositivo conectado!");
+  if (EasyBLE::isConnected())
+  {
+    Serial.println("Um dispositivo foi conectado.");
   }
-  else{
-    Serial.println("Dispositivo desconectado!");
+  else
+  {
+    Serial.println("Um dispositivo foi desconectado");
   }
 }
 
-BLEUUID EasyBLE::getNewUUID(){
+std::string EasyBLE::readValue(BLECharacteristic *pCharacteristic)
+{
+  if (EasyBLE::isConnected())
+  {
+    std::string value;
+    //EasyBLE::_mutex.lock();
+    value = pCharacteristic->getValue();
+    //EasyBLE::_mutex.unlock();
+    return value;
+  }
+}
+
+void EasyBLE::writeValue(BLECharacteristic *pCharacteristic, std::string value)
+{
+  if (EasyBLE::isConnected())
+  {
+    //EasyBLE::_mutex.lock();
+    pCharacteristic->setValue(value);
+    pCharacteristic->notify();
+    //EasyBLE::_mutex.unlock();
+  }
+}
+
+BLEUUID EasyBLE::getNewUUID()
+{
   return BLEUUID(++EasyBLE::_nServices);
 }
