@@ -28,6 +28,7 @@ LedService::LedService(int pin, std::string name, std::string description)
   _name = name;
   _description = description;
   _state = false;
+  _interval = 1000;
 };
 
 void LedService::init()
@@ -35,7 +36,7 @@ void LedService::init()
   Serial.println("Criando o serviço " + String(_name.c_str()) + "...");
   pinMode(_pin, OUTPUT);
 
-  BLEServer *pServer = EasyBLE::createServer();
+  EasyBLE::createServer();
 
   BLEService *pService = EasyBLE::createService(_name, _description);
 
@@ -53,7 +54,11 @@ void LedService::init()
 
 void LedService::update()
 {
-  publishState();
+  if (millis() - _lastMillis > _interval)
+  {
+    publishState();
+    _lastMillis = millis();
+  }
 };
 
 void LedService::changeState(bool newState)

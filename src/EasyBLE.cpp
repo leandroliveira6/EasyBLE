@@ -91,7 +91,7 @@ void EasyBLE::changeConnection(bool newConnectionState)
   EasyBLE::_deviceConnected = newConnectionState;
   if (EasyBLE::isConnected())
   {
-    Serial.println("Um dispositivo foi conectado.");
+    Serial.println("Um dispositivo foi conectado");
   }
   else
   {
@@ -109,6 +109,7 @@ std::string EasyBLE::readValue(BLECharacteristic *pCharacteristic)
     //EasyBLE::_mutex.unlock();
     return value;
   }
+  return NULL;
 }
 
 void EasyBLE::writeValue(BLECharacteristic *pCharacteristic, std::string value)

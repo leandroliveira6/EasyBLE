@@ -8,8 +8,8 @@ void servoControlCallback(void *pObject, BLECharacteristic *pCharacteristic)
   if (value.length() > 0)
   {
     Serial.println("Valor recebido: " + String(value.c_str()));
-    pServoService->changePosition(String(value.c_str()).toInt());
-    pServoService->publishPosition();
+    pServoService->changeState(String(value.c_str()).toInt());
+    pServoService->publishState();
   }
 }
 
@@ -18,8 +18,7 @@ ServoService::ServoService(int pin, std::string name, std::string description)
   _pin = pin;
   _name = name;
   _description = description;
-  _position = 0;
-  //_pServo = new Servo();
+  _interval = 1000;
 };
 
 void ServoService::init()
@@ -28,7 +27,7 @@ void ServoService::init()
   _servo.setPeriodHertz(200); // Standard 50hz servo
   _servo.attach(_pin, 500, 2400);
 
-  BLEServer *pServer = EasyBLE::createServer();
+  EasyBLE::createServer();
 
   BLEService *pService = EasyBLE::createService(_name, _description);
 
@@ -39,30 +38,32 @@ void ServoService::init()
       "SERVO Control",
       "Controle do angulo do servomotor. Os angulos estão limitados entre 0 e 180 graus",
       EasyBLE::PROPERTY_INPUT,
-      new EasyBLECharacteristicCallback(this, servoControlCallback)
-  );
+      new EasyBLECharacteristicCallback(this, servoControlCallback));
 
   pService->start();
 
-  changePosition(0);
-  publishPosition();
+  changeState(0);
+  publishState();
 
   Serial.println("Serviço " + String(_name.c_str()) + " criado.");
 };
 
 void ServoService::update()
 {
-  publishPosition();
+  if (millis() - _lastMillis > _interval)
+  {
+    publishState();
+    _lastMillis = millis();
+  }
 };
 
-void ServoService::changePosition(int newPosition)
+void ServoService::changeState(int newState)
 {
-  _position = newPosition;
-  _position = constrain(_position, 0, 180);
-  _servo.write(_position);
+  _state = constrain(newState, 0, 180);
+  _servo.write(_state);
 }
 
-void ServoService::publishPosition()
+void ServoService::publishState()
 {
-  EasyBLE::writeValue(_pCharacteristicOutput, String(_position).c_str());
+  EasyBLE::writeValue(_pCharacteristicOutput, String(_state).c_str());
 }
