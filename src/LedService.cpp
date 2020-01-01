@@ -1,5 +1,56 @@
 #include "LedService.hpp"
 
+void ledControlCallback(void *pObject, BLECharacteristic *pCharacteristic);
+
+LedService::LedService(unsigned char pin) : LedService::LedService(pin, DEFAULT_PERIOD, DEFAULT_TITLE, DEFAULT_SUBTITLE) {}
+LedService::LedService(unsigned char pin, unsigned int period) : LedService::LedService(pin, period, DEFAULT_TITLE, DEFAULT_SUBTITLE) {}
+LedService::LedService(unsigned char pin, std::string title, std::string subtitle) : LedService::LedService(pin, DEFAULT_PERIOD, title, subtitle) {}
+LedService::LedService(unsigned char pin, unsigned int period, std::string title, std::string subtitle) : ServiceBase::ServiceBase(pin, period, title, subtitle) {}
+
+void LedService::init()
+{
+  Serial.println("Criando o serviço " + String(getTitle().c_str()) + "...");
+  pinMode(getPin(), OUTPUT);
+
+  EasyBLE::createServer();
+
+  BLEService *pService = EasyBLE::createService(getTitle(), getSubtitle());
+
+  _pCharacteristicValue = EasyBLE::createCharacteristic(
+      pService,
+      "LED State",
+      "Exibição do estado atual do LED",
+      EasyBLE::PROPERTY_OUTPUT,
+      NULL);
+
+  EasyBLE::createCharacteristic(
+      pService,
+      "LED Control",
+      "Controle do estado atual do LED",
+      EasyBLE::PROPERTY_SWITCH,
+      new EasyBLECharacteristicCallback(this, ledControlCallback));
+
+  pService->start();
+
+  setState(STATE_OFF);
+
+  Serial.println("Serviço " + String(getTitle().c_str()) + " criado.");
+};
+
+void LedService::update()
+{
+  if (isReady(true))
+  {
+    publishState(_pCharacteristicValue);
+    digitalWrite(getPin(), getState() == STATE_ON ? HIGH : LOW);
+  }
+}
+
+BLECharacteristic *LedService::getCharacteristicValue()
+{
+  return _pCharacteristicValue;
+}
+
 void ledControlCallback(void *pObject, BLECharacteristic *pCharacteristic)
 {
   LedService *pLedService = (LedService *)pObject;
@@ -8,80 +59,7 @@ void ledControlCallback(void *pObject, BLECharacteristic *pCharacteristic)
   if (value.length() > 0)
   {
     Serial.println("Valor recebido: " + String(value.c_str()));
-
-    if (value == "on")
-    {
-      pLedService->changeState(true);
-    }
-    else if (value == "off")
-    {
-      pLedService->changeState(false);
-    }
-
-    pLedService->publishState();
-  }
-}
-
-LedService::LedService(int pin, std::string name, std::string description)
-{
-  _pin = pin;
-  _name = name;
-  _description = description;
-  _state = false;
-  _interval = 1000;
-};
-
-void LedService::init()
-{
-  Serial.println("Criando o serviço " + String(_name.c_str()) + "...");
-  pinMode(_pin, OUTPUT);
-
-  EasyBLE::createServer();
-
-  BLEService *pService = EasyBLE::createService(_name, _description);
-
-  _pCharacteristicOutput = EasyBLE::createCharacteristic(pService, "LED State", "Exibição do estado atual do LED", EasyBLE::PROPERTY_OUTPUT, NULL);
-
-  EasyBLE::createCharacteristic(pService, "LED Control", "Controle do estado atual do LED", EasyBLE::PROPERTY_SWITCH, new EasyBLECharacteristicCallback(this, ledControlCallback));
-
-  pService->start();
-
-  changeState(false);
-  publishState();
-
-  Serial.println("Serviço " + String(_name.c_str()) + " criado.");
-};
-
-void LedService::update()
-{
-  if (millis() - _lastMillis > _interval)
-  {
-    publishState();
-    _lastMillis = millis();
-  }
-};
-
-void LedService::changeState(bool newState)
-{
-  _state = newState;
-  if (_state)
-  {
-    digitalWrite(_pin, HIGH);
-  }
-  else
-  {
-    digitalWrite(_pin, LOW);
-  }
-}
-
-void LedService::publishState()
-{
-  if (_state)
-  {
-    EasyBLE::writeValue(_pCharacteristicOutput, "Ligado");
-  }
-  else
-  {
-    EasyBLE::writeValue(_pCharacteristicOutput, "Desligado");
+    pLedService->setState(value == "on" ? STATE_ON : STATE_OFF);
+    pLedService->publishState(pLedService->getCharacteristicValue());
   }
 }

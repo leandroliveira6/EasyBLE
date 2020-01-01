@@ -1,16 +1,16 @@
 #include "EasyBLE.hpp"
 #include "EasyBLEServerCallback.hpp"
 
-unsigned int EasyBLE::_nServices;
+unsigned short EasyBLE::_nUuids;
 bool EasyBLE::_deviceConnected;
 BLEServer *EasyBLE::_pServer;
-std::mutex EasyBLE::_mutex;
+// std::mutex EasyBLE::_mutex;
 
 BLEServer *EasyBLE::createServer()
 {
   if (EasyBLE::_pServer == NULL)
   {
-    EasyBLE::_nServices = 0;
+    EasyBLE::_nUuids = 0;
 
     BLEDevice::init("EasyBLE");
 
@@ -125,5 +125,5 @@ void EasyBLE::writeValue(BLECharacteristic *pCharacteristic, std::string value)
 
 BLEUUID EasyBLE::getNewUUID()
 {
-  return BLEUUID(++EasyBLE::_nServices);
+  return BLEUUID(++EasyBLE::_nUuids);
 }

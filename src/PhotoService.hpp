@@ -1,19 +1,14 @@
-#include "EasyBLE.hpp"
+#include "ServiceBase.cpp"
 
-class PhotoService
+class PhotoService : public ServiceBase<unsigned char>
 {
-  int _pin;
-  std::string _name;
-  std::string _description;
-  BLECharacteristic *_pCharacteristicOutput;
-  int _state; // luminus rate
-  int _interval;
-  int _lastMillis;
+  BLECharacteristic *_pCharacteristicValue;
 
 public:
-  PhotoService(int pin, std::string name, std::string description);
+  PhotoService(unsigned char pin);
+  PhotoService(unsigned char pin, unsigned int period);
+  PhotoService(unsigned char pin, std::string title, std::string subtitle);
+  PhotoService(unsigned char pin, unsigned int period, std::string title, std::string subtitle);
   void init();
   void update();
-  void changeState(int newState);
-  void publishState();
 };

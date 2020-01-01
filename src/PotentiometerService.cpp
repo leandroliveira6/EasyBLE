@@ -1,45 +1,35 @@
 #include "PotentiometerService.hpp"
 
-PotentiometerService::PotentiometerService(int pin, std::string name, std::string description)
-{
-  _pin = pin;
-  _name = name;
-  _description = description;
-  _interval = 1000;
-}
+PotentiometerService::PotentiometerService(unsigned char pin) : PotentiometerService::PotentiometerService(pin, DEFAULT_PERIOD, DEFAULT_TITLE, DEFAULT_SUBTITLE) {}
+PotentiometerService::PotentiometerService(unsigned char pin, unsigned int period) : PotentiometerService::PotentiometerService(pin, period, DEFAULT_TITLE, DEFAULT_SUBTITLE) {}
+PotentiometerService::PotentiometerService(unsigned char pin, std::string title, std::string subtitle) : PotentiometerService::PotentiometerService(pin, DEFAULT_PERIOD, title, subtitle) {}
+PotentiometerService::PotentiometerService(unsigned char pin, unsigned int period, std::string title, std::string subtitle) : ServiceBase::ServiceBase(pin, period, title, subtitle) {}
 
 void PotentiometerService::init()
 {
-  Serial.println("Criando o serviço " + String(_name.c_str()) + "...");
+  Serial.println("Criando o serviço " + String(getTitle().c_str()) + "...");
 
   EasyBLE::createServer();
 
-  BLEService *pService = EasyBLE::createService(_name, _description);
+  BLEService *pService = EasyBLE::createService(getTitle(), getSubtitle());
 
-  _pCharacteristicOutput = EasyBLE::createCharacteristic(pService, "POTENTIOMETER Value (%)", "Taxa de resistencia do potenciômetro", EasyBLE::PROPERTY_OUTPUT, NULL);
+  _pCharacteristicValue = EasyBLE::createCharacteristic(
+      pService,
+      "POTENTIOMETER Value (%)",
+      "Taxa de resistencia do potenciômetro",
+      EasyBLE::PROPERTY_OUTPUT,
+      NULL);
 
   pService->start();
 
-  Serial.println("Serviço " + String(_name.c_str()) + " criado.");
+  Serial.println("Serviço " + String(getTitle().c_str()) + " criado.");
 }
 
 void PotentiometerService::update()
 {
-  if (millis() - _lastMillis > _interval)
+  if (isReady())
   {
-    int newState = map(analogRead(_pin), 0, 4095, 0, 100);
-    changeState(newState);
-    publishState();
-    _lastMillis = millis();
+    setState(map(analogRead(getPin()), 0, 4095, 0, 100));
+    publishState(_pCharacteristicValue);
   }
-}
-
-void PotentiometerService::changeState(int newState)
-{
-  _state = newState;
-}
-
-void PotentiometerService::publishState()
-{
-  EasyBLE::writeValue(_pCharacteristicOutput, String(_state).c_str());
 }

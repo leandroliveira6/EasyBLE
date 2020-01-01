@@ -1,21 +1,15 @@
-#include "EasyBLE.hpp"
+#include "ServiceBase.cpp"
 
-class ButtonService
+class ButtonService : public ServiceBase<int>
 {
-  int _pin;
-  std::string _name;
-  std::string _description;
-  BLECharacteristic *_pCharacteristicOutput;
-  int _state; // button click count
-  int _lastClickState;
-  int _interval;
-  int _lastMillis;
+  BLECharacteristic *_pCharacteristicValue;
 
 public:
-  ButtonService(int pin, std::string name, std::string description);
+  ButtonService(unsigned char pin);
+  ButtonService(unsigned char pin, unsigned int period);
+  ButtonService(unsigned char pin, std::string title, std::string subtitle);
+  ButtonService(unsigned char pin, unsigned int period, std::string title, std::string subtitle);
   void init();
   void update();
-  void changeState(int newState);
-  void publishState();
-  int getState();
+  BLECharacteristic *getCharacteristicValue();
 };

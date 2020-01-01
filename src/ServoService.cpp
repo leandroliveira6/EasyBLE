@@ -1,37 +1,27 @@
 #include "ServoService.hpp"
 
-void servoControlCallback(void *pObject, BLECharacteristic *pCharacteristic)
-{
-  ServoService *pServoService = (ServoService *)pObject;
-  std::string value = EasyBLE::readValue(pCharacteristic);
+void servoControlCallback(void *pObject, BLECharacteristic *pCharacteristic);
 
-  if (value.length() > 0)
-  {
-    Serial.println("Valor recebido: " + String(value.c_str()));
-    pServoService->changeState(String(value.c_str()).toInt());
-    pServoService->publishState();
-  }
-}
-
-ServoService::ServoService(int pin, std::string name, std::string description)
-{
-  _pin = pin;
-  _name = name;
-  _description = description;
-  _interval = 1000;
-};
+ServoService::ServoService(unsigned char pin) : ServoService::ServoService(pin, DEFAULT_PERIOD, DEFAULT_TITLE, DEFAULT_SUBTITLE) {}
+ServoService::ServoService(unsigned char pin, unsigned int period) : ServoService::ServoService(pin, period, DEFAULT_TITLE, DEFAULT_SUBTITLE) {}
+ServoService::ServoService(unsigned char pin, std::string title, std::string subtitle) : ServoService::ServoService(pin, DEFAULT_PERIOD, title, subtitle) {}
+ServoService::ServoService(unsigned char pin, unsigned int period, std::string title, std::string subtitle) : ServiceBase::ServiceBase(pin, period, title, subtitle) {}
 
 void ServoService::init()
 {
-  Serial.println("Criando o serviço " + String(_name.c_str()) + "...");
-  _servo.setPeriodHertz(200); // Standard 50hz servo
-  _servo.attach(_pin, 500, 2400);
+  Serial.println("Criando o serviço " + String(getTitle().c_str()) + "...");
+  _servo.setPeriodHertz(10); // Standard 50hz servo
+  _servo.attach(getPin(), DEFAULT_MIN_PULSE, DEFAULT_MAX_PULSE);
 
   EasyBLE::createServer();
+  BLEService *pService = EasyBLE::createService(getTitle(), getSubtitle());
 
-  BLEService *pService = EasyBLE::createService(_name, _description);
-
-  _pCharacteristicOutput = EasyBLE::createCharacteristic(pService, "SERVO State", "Exibição do angulo atual do servo", EasyBLE::PROPERTY_OUTPUT, NULL);
+  _pCharacteristicValue = EasyBLE::createCharacteristic(
+      pService,
+      "SERVO State",
+      "Exibição do angulo atual do servo",
+      EasyBLE::PROPERTY_OUTPUT,
+      NULL);
 
   EasyBLE::createCharacteristic(
       pService,
@@ -42,28 +32,38 @@ void ServoService::init()
 
   pService->start();
 
-  changeState(0);
-  publishState();
+  setState(0);
 
-  Serial.println("Serviço " + String(_name.c_str()) + " criado.");
+  Serial.println("Serviço " + String(getTitle().c_str()) + " criado.");
 };
 
 void ServoService::update()
 {
-  if (millis() - _lastMillis > _interval)
+  if (isReady(true))
   {
-    publishState();
-    _lastMillis = millis();
+    publishState(_pCharacteristicValue);
+    _servo.write(getState());
   }
 };
 
-void ServoService::changeState(int newState)
+void ServoService::setOptionals(unsigned short minPulseWidth, unsigned short maxPulseWidth)
 {
-  _state = constrain(newState, 0, 180);
-  _servo.write(_state);
+  _servo.attach(getPin(), minPulseWidth, maxPulseWidth);
 }
 
-void ServoService::publishState()
+BLECharacteristic *ServoService::getCharacteristicValue()
 {
-  EasyBLE::writeValue(_pCharacteristicOutput, String(_state).c_str());
+  return _pCharacteristicValue;
+}
+
+void servoControlCallback(void *pObject, BLECharacteristic *pCharacteristic)
+{
+  ServoService *pServoService = (ServoService *)pObject;
+  std::string value = EasyBLE::readValue(pCharacteristic);
+
+  if (value.length() > 0)
+  {
+    Serial.println("Valor recebido: " + String(value.c_str()));
+    pServoService->setState(constrain(String(value.c_str()).toInt(), 0, 180));
+  }
 }

@@ -1,19 +1,18 @@
-#include "EasyBLE.hpp"
+#include "ServiceBase.cpp"
 
-class LedService
+#define STATE_ON "LIGADO"
+#define STATE_OFF "DESLIGADO"
+
+class LedService : public ServiceBase<String>
 {
-  int _pin;
-  std::string _name;
-  std::string _description;
-  BLECharacteristic *_pCharacteristicOutput;
-  bool _state; // led state
-  int _interval;
-  int _lastMillis;
+  BLECharacteristic *_pCharacteristicValue;
 
 public:
-  LedService(int pin, std::string name, std::string description);
+  LedService(unsigned char pin);
+  LedService(unsigned char pin, unsigned int period);
+  LedService(unsigned char pin, std::string title, std::string subtitle);
+  LedService(unsigned char pin, unsigned int period, std::string title, std::string subtitle);
   void init();
   void update();
-  void changeState(bool newState);
-  void publishState();
+  BLECharacteristic *getCharacteristicValue();
 };

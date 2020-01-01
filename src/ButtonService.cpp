@@ -1,58 +1,31 @@
 #include "ButtonService.hpp"
 
-void buttonControlCallback(void *pObject, BLECharacteristic *pCharacteristic)
-{
-  ButtonService *pButtonService = (ButtonService *)pObject;
-  std::string value = EasyBLE::readValue(pCharacteristic);
+void buttonControlCallback(void *pObject, BLECharacteristic *pCharacteristic);
+void IRAM_ATTR buttonCallback(void *pObject);
 
-  if (value.length() > 0)
-  {
-    Serial.println("Valor recebido: " + String(value.c_str()));
-    pButtonService->changeState(String(value.c_str()).toInt());
-    pButtonService->publishState();
-  }
-}
-
-// void IRAM_ATTR ButtonService::_buttonCallback()
-// {
-//   changeState(++_state);
-//   publishState();
-// }
-
-ButtonService::ButtonService(int pin, std::string name, std::string description)
-{
-  _pin = pin;
-  _name = name;
-  _description = description;
-  _state = 0;
-  _interval = 140;
-};
-
-void IRAM_ATTR buttonCallback(void *pObject)
-{
-  ButtonService *pButtonService = (ButtonService *)pObject;
-  int state = pButtonService->getState();
-  pButtonService->changeState(++state);
-  pButtonService->publishState();
-}
+ButtonService::ButtonService(unsigned char pin) : ButtonService::ButtonService(pin, DEFAULT_PERIOD, DEFAULT_TITLE, DEFAULT_SUBTITLE) {}
+ButtonService::ButtonService(unsigned char pin, unsigned int period) : ButtonService::ButtonService(pin, period, DEFAULT_TITLE, DEFAULT_SUBTITLE) {}
+ButtonService::ButtonService(unsigned char pin, std::string title, std::string subtitle) : ButtonService::ButtonService(pin, DEFAULT_PERIOD, title, subtitle) {}
+ButtonService::ButtonService(unsigned char pin, unsigned int period, std::string title, std::string subtitle) : ServiceBase::ServiceBase(pin, period, title, subtitle) {}
 
 void ButtonService::init()
 {
-  Serial.println("Criando o serviço " + String(_name.c_str()) + "...");
-  // pinMode(_pin, INPUT);
-  // attachInterrupt(_pin, _buttonCallback, FALLING);
-
-  gpio_pad_select_gpio((gpio_num_t)_pin);
-  gpio_set_direction((gpio_num_t)_pin, GPIO_MODE_INPUT);
-  gpio_set_intr_type((gpio_num_t)_pin, GPIO_INTR_POSEDGE);
+  Serial.println("Criando o serviço " + String(getTitle().c_str()) + "...");
+  gpio_set_direction((gpio_num_t)getPin(), GPIO_MODE_INPUT);
+  gpio_set_intr_type((gpio_num_t)getPin(), GPIO_INTR_NEGEDGE);
   gpio_install_isr_service(0);
-  gpio_isr_handler_add((gpio_num_t)_pin, buttonCallback, this);
+  gpio_isr_handler_add((gpio_num_t)getPin(), buttonCallback, this);
 
   EasyBLE::createServer();
 
-  BLEService *pService = EasyBLE::createService(_name, _description);
+  BLEService *pService = EasyBLE::createService(getTitle(), getSubtitle());
 
-  _pCharacteristicOutput = EasyBLE::createCharacteristic(pService, "BUTTON Click Count", "Exibe a quantidade de clicks no botão", EasyBLE::PROPERTY_OUTPUT, NULL);
+  _pCharacteristicValue = EasyBLE::createCharacteristic(
+      pService,
+      "BUTTON Click Count",
+      "Exibe a quantidade de clicks no botão",
+      EasyBLE::PROPERTY_OUTPUT,
+      NULL);
 
   EasyBLE::createCharacteristic(
       pService,
@@ -63,31 +36,41 @@ void ButtonService::init()
 
   pService->start();
 
-  changeState(0);
-  publishState();
+  setState(0);
 
-  Serial.println("Serviço " + String(_name.c_str()) + " criado.");
+  Serial.println("Serviço " + String(getTitle().c_str()) + " criado.");
 };
 
 void ButtonService::update()
 {
-}
-
-void ButtonService::changeState(int newState)
-{
-  if (millis() - _lastMillis > _interval)
+  if (isReady())
   {
-    _state = newState;
-    _lastMillis = millis();
+    publishState(_pCharacteristicValue);
   }
 }
 
-void ButtonService::publishState()
+BLECharacteristic *ButtonService::getCharacteristicValue()
 {
-  EasyBLE::writeValue(_pCharacteristicOutput, String(_state).c_str());
+  return _pCharacteristicValue;
 }
 
-int ButtonService::getState()
+void buttonControlCallback(void *pObject, BLECharacteristic *pCharacteristic)
 {
-  return _state;
+  ButtonService *pButtonService = (ButtonService *)pObject;
+  std::string value = EasyBLE::readValue(pCharacteristic);
+
+  if (value.length() > 0)
+  {
+    Serial.println("Valor recebido: " + String(value.c_str()));
+    pButtonService->setState(String(value.c_str()).toInt());
+    pButtonService->publishState(pButtonService->getCharacteristicValue());
+  }
+}
+
+void IRAM_ATTR buttonCallback(void *pObject)
+{
+  ButtonService *pButtonService = (ButtonService *)pObject;
+  int state = pButtonService->getState();
+  pButtonService->setState(++state);
+  pButtonService->publishState(pButtonService->getCharacteristicValue());
 }

@@ -2,16 +2,16 @@
 
 #include <Arduino.h>
 #include <BLEDevice.h>
-#include <mutex>
+// #include <mutex>
 
 #include "EasyBLECharacteristicCallback.hpp"
 
 class EasyBLE
 {
-  static unsigned int _nServices;
+  static unsigned short _nUuids;
   static bool _deviceConnected;
   static BLEServer *_pServer;
-  static std::mutex _mutex;
+  // static std::mutex _mutex;
 
 public:
   static const short int PROPERTY_INPUT = 0;  // recebe dados

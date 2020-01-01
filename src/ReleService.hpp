@@ -1,19 +1,18 @@
-#include "EasyBLE.hpp"
+#include "ServiceBase.cpp"
 
-class ReleService
+#define STATE_ON "LIGADO"
+#define STATE_OFF "DESLIGADO"
+
+class ReleService : public ServiceBase<String>
 {
-  int _pin;
-  std::string _name;
-  std::string _description;
-  BLECharacteristic *_pCharacteristicOutput;
-  bool _state; // rele state
-  int _interval;
-  int _lastMillis;
+  BLECharacteristic *_pCharacteristicValue;
 
 public:
-  ReleService(int pin, std::string name, std::string description);
+  ReleService(unsigned char pin);
+  ReleService(unsigned char pin, unsigned int period);
+  ReleService(unsigned char pin, std::string title, std::string subtitle);
+  ReleService(unsigned char pin, unsigned int period, std::string title, std::string subtitle);
   void init();
   void update();
-  void changeState(bool newState);
-  void publishState();
+  BLECharacteristic *getCharacteristicValue();
 };

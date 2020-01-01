@@ -1,45 +1,35 @@
 #include "PhotoService.hpp"
 
-PhotoService::PhotoService(int pin, std::string name, std::string description)
-{
-  _pin = pin;
-  _name = name;
-  _description = description;
-  _interval = 1000;
-}
+PhotoService::PhotoService(unsigned char pin) : PhotoService::PhotoService(pin, DEFAULT_PERIOD, DEFAULT_TITLE, DEFAULT_SUBTITLE) {}
+PhotoService::PhotoService(unsigned char pin, unsigned int period) : PhotoService::PhotoService(pin, period, DEFAULT_TITLE, DEFAULT_SUBTITLE) {}
+PhotoService::PhotoService(unsigned char pin, std::string title, std::string subtitle) : PhotoService::PhotoService(pin, DEFAULT_PERIOD, title, subtitle) {}
+PhotoService::PhotoService(unsigned char pin, unsigned int period, std::string title, std::string subtitle) : ServiceBase::ServiceBase(pin, period, title, subtitle) {}
 
 void PhotoService::init()
 {
-  Serial.println("Criando o serviço " + String(_name.c_str()) + "...");
+  Serial.println("Criando o serviço " + String(getTitle().c_str()) + "...");
 
   EasyBLE::createServer();
 
-  BLEService *pService = EasyBLE::createService(_name, _description);
+  BLEService *pService = EasyBLE::createService(getTitle(), getSubtitle());
 
-  _pCharacteristicOutput = EasyBLE::createCharacteristic(pService, "PHOTO Value (%)", "Taxa de luminosidade do ambiente", EasyBLE::PROPERTY_OUTPUT, NULL);
+  _pCharacteristicValue = EasyBLE::createCharacteristic(
+      pService,
+      "PHOTO Value (%)",
+      "Taxa de luminosidade do ambiente",
+      EasyBLE::PROPERTY_OUTPUT,
+      NULL);
 
   pService->start();
 
-  Serial.println("Serviço " + String(_name.c_str()) + " criado.");
+  Serial.println("Serviço " + String(getTitle().c_str()) + " criado.");
 }
 
 void PhotoService::update()
 {
-  if (millis() - _lastMillis > _interval)
+  if (isReady())
   {
-    int newState = map(analogRead(_pin), 0, 4095, 0, 100);
-    changeState(newState);
-    publishState();
-    _lastMillis = millis();
+    setState(map(analogRead(getPin()), 0, 4095, 0, 100));
+    publishState(_pCharacteristicValue);
   }
-}
-
-void PhotoService::changeState(int newState)
-{
-  _state = newState;
-}
-
-void PhotoService::publishState()
-{
-  EasyBLE::writeValue(_pCharacteristicOutput, String(_state).c_str());
 }

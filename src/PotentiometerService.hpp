@@ -1,19 +1,15 @@
-#include "EasyBLE.hpp"
+#include "ServiceBase.cpp"
 
-class PotentiometerService
+class PotentiometerService : public ServiceBase<unsigned char>
 {
-  int _pin;
-  std::string _name;
-  std::string _description;
-  BLECharacteristic *_pCharacteristicOutput;
-  int _state; // potentiometer rate
-  int _interval;
-  int _lastMillis;
+  BLECharacteristic *_pCharacteristicValue;
 
 public:
-  PotentiometerService(int pin, std::string name, std::string description);
+  PotentiometerService(unsigned char pin);
+  PotentiometerService(unsigned char pin, unsigned int period);
+  PotentiometerService(unsigned char pin, std::string title, std::string subtitle);
+  PotentiometerService(unsigned char pin, unsigned int period, std::string title, std::string subtitle);
   void init();
   void update();
-  void changeState(int newState);
-  void publishState();
+  BLECharacteristic *getCharacteristicValue();
 };
