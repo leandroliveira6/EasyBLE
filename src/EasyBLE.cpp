@@ -88,14 +88,18 @@ bool EasyBLE::isConnected()
 
 void EasyBLE::changeConnection(bool newConnectionState)
 {
-  EasyBLE::_deviceConnected = newConnectionState;
-  if (EasyBLE::isConnected())
+  if (newConnectionState)
   {
     Serial.println("Um dispositivo foi conectado");
+    EasyBLE::_deviceConnected = true;
   }
   else
   {
     Serial.println("Um dispositivo foi desconectado");
+    if (EasyBLE::_pServer->getConnectedCount() == 0)
+    {
+      EasyBLE::_deviceConnected = false;
+    }
   }
 }
 

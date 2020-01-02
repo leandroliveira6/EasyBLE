@@ -5,7 +5,10 @@
 #define DEFAULT_MIN_PULSE 500
 #define DEFAULT_MAX_PULSE 2400
 
-// All pin numbers are allowed, but only pins 2,4,12-19,21-23,25-27,32-33 are recommended.
+/**
+ * @brief Modelo de ServoService.
+ *
+ */
 class ServoService : public ServiceBase<unsigned char>
 {
   BLECharacteristic *_pCharacteristicValue;

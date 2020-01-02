@@ -3,6 +3,10 @@
 #define STATE_ON "LIGADO"
 #define STATE_OFF "DESLIGADO"
 
+/**
+ * @brief Modelo de LedService.
+ *
+ */
 class LedService : public ServiceBase<String>
 {
   BLECharacteristic *_pCharacteristicValue;

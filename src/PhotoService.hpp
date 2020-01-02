@@ -1,5 +1,9 @@
 #include "ServiceBase.cpp"
 
+/**
+ * @brief Modelo do PhotoService.
+ *
+ */
 class PhotoService : public ServiceBase<unsigned char>
 {
   BLECharacteristic *_pCharacteristicValue;

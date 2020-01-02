@@ -1,5 +1,9 @@
 #include "ServiceBase.cpp"
 
+/**
+ * @brief Modelo de ButtonService.
+ *
+ */
 class ButtonService : public ServiceBase<int>
 {
   BLECharacteristic *_pCharacteristicValue;

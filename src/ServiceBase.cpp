@@ -7,6 +7,10 @@
 #define DEFAULT_TITLE "Titulo não definido"
 #define DEFAULT_SUBTITLE "Subtitulo não definido"
 
+/**
+ * @brief Modelo de ServiceBase.
+ *
+ */
 template <class T>
 class ServiceBase
 {

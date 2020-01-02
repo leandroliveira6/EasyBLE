@@ -1,5 +1,9 @@
 #include "ServiceBase.cpp"
 
+/**
+ * @brief Modelo de PotentiometerService.
+ *
+ */
 class PotentiometerService : public ServiceBase<unsigned char>
 {
   BLECharacteristic *_pCharacteristicValue;

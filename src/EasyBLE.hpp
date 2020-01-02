@@ -6,6 +6,10 @@
 
 #include "EasyBLECharacteristicCallback.hpp"
 
+/**
+ * @brief Modelo de EasyBLE.
+ *
+ */
 class EasyBLE
 {
   static unsigned short _nUuids;

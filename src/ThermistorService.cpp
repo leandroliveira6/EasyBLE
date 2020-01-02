@@ -1,5 +1,14 @@
 #include "ThermistorService.hpp"
 
+/**
+ * @brief Construtores de ThermistorService.
+ *
+ * Serviço de monitoramento de um thermistor pelo aplicativo EasyBLE.
+ * @param [in] pin Pino onde o componente está conectado. Apenas os pinos analógicos são compativeis.
+ * @param [in] period Periodo (ms) de atualização das leituras e escritas. É opcional e possui como padrão 1000ms.
+ * @param [in] title Titulo do serviço, exibido nos cards de serviço no aplicativo. É opcional e possui como padrão "Titulo não definido".
+ * @param [in] subtitle Subtitulo do serviço, exibido nos cards de serviço no aplicativo. É opcional e possui como padrão "Subtitulo não definido".
+ */
 ThermistorService::ThermistorService(unsigned char pin) : ThermistorService::ThermistorService(pin, DEFAULT_PERIOD, DEFAULT_TITLE, DEFAULT_SUBTITLE) {}
 ThermistorService::ThermistorService(unsigned char pin, unsigned int period) : ThermistorService::ThermistorService(pin, period, DEFAULT_TITLE, DEFAULT_SUBTITLE) {}
 ThermistorService::ThermistorService(unsigned char pin, std::string title, std::string subtitle) : ThermistorService::ThermistorService(pin, DEFAULT_PERIOD, title, subtitle) {}
@@ -12,6 +21,11 @@ ThermistorService::ThermistorService(unsigned char pin, unsigned int period, std
   _sumSamples = 0;
 }
 
+/**
+ * @brief Inicializa o componente e todas as instancias BLE de ThermistorService.
+ *
+ * Método responsavel pela inicialização dos serviços, caracteristicas e descritores BLE, além de inicializar o componente e calibrar a entrada.
+ */
 void ThermistorService::init()
 {
   Serial.println("Criando o serviço " + String(getTitle().c_str()) + "...");
@@ -33,6 +47,11 @@ void ThermistorService::init()
   Serial.println("Serviço " + String(getTitle().c_str()) + " criado.");
 }
 
+/**
+ * @brief Atualiza o estado atual do serviço.
+ *
+ * Método responsavel pela atualização do estado no serviço e no aplicativo, periodicamente.
+ */
 void ThermistorService::update()
 {
   if (isReady())
@@ -52,6 +71,11 @@ void ThermistorService::update()
   }
 }
 
+/**
+ * @brief Reconfigura o componente.
+ *
+ * Método responsavel pela reconfiguração das variaveis do componente.
+ */
 void ThermistorService::setOptionals(unsigned short beta, unsigned short maxVoltage, unsigned short maxSamples)
 {
   _beta = beta;

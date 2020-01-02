@@ -6,6 +6,10 @@
 #define DEFAULT_MAX_VOLTAGE 5000
 #define DEFAULT_MAX_SAMPLES 10
 
+/**
+ * @brief Modelo de ThermistorService.
+ *
+ */
 class ThermistorService : public ServiceBase<float>
 {
   BLECharacteristic *_pCharacteristicValue;
