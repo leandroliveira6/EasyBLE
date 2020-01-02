@@ -7,7 +7,7 @@
 #include "EasyBLECharacteristicCallback.hpp"
 
 /**
- * @brief Modelo de EasyBLE.
+ * @brief Modelo do EasyBLE.
  *
  */
 class EasyBLE

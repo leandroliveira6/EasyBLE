@@ -1,7 +1,7 @@
 #include "EasyBLECharacteristicCallback.hpp"
 
 /**
- * @brief Construtor de EasyBLECharacteristicCallback.
+ * @brief Construtor do EasyBLECharacteristicCallback.
  *
  * Classe para os callbacks usados nas caracteristicas de um serviço. Armazena a referencia da instancia do serviço 
  * da caracteristica e aciona a função callback sempre que uma escrita é realizada na caracteristica em questão.

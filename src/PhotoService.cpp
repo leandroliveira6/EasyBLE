@@ -1,7 +1,7 @@
 #include "PhotoService.hpp"
 
 /**
- * @brief Construtores de PhotoService.
+ * @brief Construtores do PhotoService.
  *
  * Serviço de monitoramento de um photoresistor pelo aplicativo EasyBLE.
  * @param [in] pin Pino onde o componente está conectado. Apenas os pinos analógicos são compativeis.

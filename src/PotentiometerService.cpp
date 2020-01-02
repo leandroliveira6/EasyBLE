@@ -1,7 +1,7 @@
 #include "PotentiometerService.hpp"
 
 /**
- * @brief Construtores de PotentiometerService.
+ * @brief Construtores do PotentiometerService.
  *
  * Serviço de monitoramento de um potenciometro pelo aplicativo EasyBLE.
  * @param [in] pin Pino onde o componente está conectado. Apenas os pinos analógicos são compativeis.

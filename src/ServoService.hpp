@@ -6,7 +6,7 @@
 #define DEFAULT_MAX_PULSE 2400
 
 /**
- * @brief Modelo de ServoService.
+ * @brief Modelo do ServoService.
  *
  */
 class ServoService : public ServiceBase<unsigned char>

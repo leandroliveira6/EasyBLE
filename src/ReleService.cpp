@@ -7,7 +7,7 @@
 void releControlCallback(void *pObject, BLECharacteristic *pCharacteristic);
 
 /**
- * @brief Construtores de ReleService.
+ * @brief Construtores do ReleService.
  *
  * Serviço de monitoramento de um thermistor pelo aplicativo EasyBLE.
  * @param [in] pin Pino onde o componente está conectado. Apenas os pinos digitais são compativeis.

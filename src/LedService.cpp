@@ -7,7 +7,7 @@
 void ledControlCallback(void *pObject, BLECharacteristic *pCharacteristic);
 
 /**
- * @brief Construtores de LedService.
+ * @brief Construtores do LedService.
  *
  * Serviço de monitoramento e controle de um LED pelo aplicativo EasyBLE.
  * @param [in] pin Pino onde o componente está conectado. Apenas os pinos digitais são compativeis.

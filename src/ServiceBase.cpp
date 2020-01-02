@@ -8,7 +8,7 @@
 #define DEFAULT_SUBTITLE "Subtitulo não definido"
 
 /**
- * @brief Modelo de ServiceBase.
+ * @brief Modelo do ServiceBase.
  *
  */
 template <class T>
@@ -34,7 +34,7 @@ private:
 };
 
 /**
- * @brief Construtor de ServoBase.
+ * @brief Construtor do ServoBase.
  *
  * Serviço que provê métodos comuns para todos os serviços da biblioteca. Armazena dados basicos de cada serviço e 
  * controla tanto os estados quanto o periodo de atualização dos serviços.

@@ -1,7 +1,7 @@
 #include <BLECharacteristic.h>
 
 /**
- * @brief Modelo de EasyBLECharacteristicCallback.
+ * @brief Modelo do EasyBLECharacteristicCallback.
  *
  */
 class EasyBLECharacteristicCallback : public BLECharacteristicCallbacks

@@ -1,7 +1,7 @@
 #include "ServiceBase.cpp"
 
 /**
- * @brief Modelo de PotentiometerService.
+ * @brief Modelo do PotentiometerService.
  *
  */
 class PotentiometerService : public ServiceBase<unsigned char>

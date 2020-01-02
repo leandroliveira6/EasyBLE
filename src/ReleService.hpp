@@ -4,7 +4,7 @@
 #define STATE_OFF "DESLIGADO"
 
 /**
- * @brief Modelo de ReleService.
+ * @brief Modelo do ReleService.
  *
  */
 class ReleService : public ServiceBase<String>

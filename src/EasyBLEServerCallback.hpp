@@ -1,7 +1,7 @@
 #include <BLEServer.h>
 
 /**
- * @brief Modelo de EasyBLEServerCallback.
+ * @brief Modelo do EasyBLEServerCallback.
  *
  */
 class EasyBLEServerCallback : public BLEServerCallbacks

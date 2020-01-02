@@ -1,7 +1,7 @@
 #include "ThermistorService.hpp"
 
 /**
- * @brief Construtores de ThermistorService.
+ * @brief Construtores do ThermistorService.
  *
  * Serviço de monitoramento de um thermistor pelo aplicativo EasyBLE.
  * @param [in] pin Pino onde o componente está conectado. Apenas os pinos analógicos são compativeis.

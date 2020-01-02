@@ -4,7 +4,7 @@
 #define STATE_OFF "DESLIGADO"
 
 /**
- * @brief Modelo de LedService.
+ * @brief Modelo do LedService.
  *
  */
 class LedService : public ServiceBase<String>

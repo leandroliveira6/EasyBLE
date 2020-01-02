@@ -1,7 +1,7 @@
 #include "ServiceBase.cpp"
 
 /**
- * @brief Modelo de ButtonService.
+ * @brief Modelo do ButtonService.
  *
  */
 class ButtonService : public ServiceBase<int>

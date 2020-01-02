@@ -7,7 +7,7 @@
 void servoControlCallback(void *pObject, BLECharacteristic *pCharacteristic);
 
 /**
- * @brief Construtores de ServoService.
+ * @brief Construtores do ServoService.
  *
  * Serviço de monitoramento e controle de um servomotor pelo aplicativo EasyBLE.
  * @param [in] pin Pino onde o componente está conectado. Todos são compativeis, mas apenas os pinos 2,4,12-19,21-23,25-27,32-33 são recomendados.

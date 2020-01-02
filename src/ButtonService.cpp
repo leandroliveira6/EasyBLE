@@ -8,7 +8,7 @@ void buttonControlCallback(void *pObject, BLECharacteristic *pCharacteristic);
 void IRAM_ATTR buttonCallback(void *pObject);
 
 /**
- * @brief Construtores de ButtonService.
+ * @brief Construtores do ButtonService.
  *
  * Serviço de monitoramento e controle de um contador de clicks de um botão pelo aplicativo EasyBLE.
  * @param [in] pin Pino onde o componente está conectado. Apenas os pinos digitais são compativeis.

@@ -7,7 +7,7 @@
 #define DEFAULT_MAX_SAMPLES 10
 
 /**
- * @brief Modelo de ThermistorService.
+ * @brief Modelo do ThermistorService.
  *
  */
 class ThermistorService : public ServiceBase<float>
