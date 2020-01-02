@@ -21,7 +21,7 @@ PotentiometerService::PotentiometerService(unsigned char pin, unsigned int perio
  */
 void PotentiometerService::init()
 {
-  Serial.println("Criando o serviço " + String(getTitle().c_str()) + "... ");
+  Serial.print("Criando um PotentiometerService com o titulo: " + String(getTitle().c_str()) + "... ");
 
   // Cria um servidor BLE, caso o mesmo já não tenha sido criado.
   EasyBLE::createServer();

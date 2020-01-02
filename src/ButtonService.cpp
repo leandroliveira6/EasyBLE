@@ -28,7 +28,7 @@ ButtonService::ButtonService(unsigned char pin, unsigned int period, std::string
  */
 void ButtonService::init()
 {
-  Serial.println("Criando o serviço " + String(getTitle().c_str()) + "... ");
+  Serial.print("Criando um ButtonService com o titulo: " + String(getTitle().c_str()) + "... ");
 
   // Configura o pino do serviço para para receber eventos de entrada.
   gpio_set_direction((gpio_num_t)getPin(), GPIO_MODE_INPUT);   // Modo de entrada

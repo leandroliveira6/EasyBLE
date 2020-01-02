@@ -27,7 +27,7 @@ LedService::LedService(unsigned char pin, unsigned int period, std::string title
  */
 void LedService::init()
 {
-  Serial.println("Criando o serviço " + String(getTitle().c_str()) + "... ");
+  Serial.print("Criando um LedService com o titulo: " + String(getTitle().c_str()) + "... ");
 
   // Configura o pino do serviço para saída.
   pinMode(getPin(), OUTPUT);

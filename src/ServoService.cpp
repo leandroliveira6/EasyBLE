@@ -28,7 +28,7 @@ ServoService::ServoService(unsigned char pin, unsigned int period, std::string t
  */
 void ServoService::init()
 {
-  Serial.println("Criando o serviço " + String(getTitle().c_str()) + "... ");
+  Serial.print("Criando um ServoService com o titulo: " + String(getTitle().c_str()) + "... ");
 
   // Configura uma instancia de uma biblioteca externa de controle de servomotores.
   _servo.setPeriodHertz(10); // 10Hz

@@ -28,7 +28,7 @@ ThermistorService::ThermistorService(unsigned char pin, unsigned int period, std
  */
 void ThermistorService::init()
 {
-  Serial.println("Criando o serviço " + String(getTitle().c_str()) + "... ");
+  Serial.print("Criando um ThermistorService com o titulo: " + String(getTitle().c_str()) + "... ");
 
   // Calibragem dos pinos de leitura analogicas para minimizar erros de leitura.
   esp_adc_cal_characterize(ADC_UNIT_1, ADC_ATTEN_DB_11, ADC_WIDTH_BIT_12, 1100, &_calibration); //Inicializa a estrutura de calibracao

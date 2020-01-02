@@ -27,7 +27,7 @@ ReleService::ReleService(unsigned char pin, unsigned int period, std::string tit
  */
 void ReleService::init()
 {
-  Serial.println("Criando o serviço " + String(getTitle().c_str()) + "... ");
+  Serial.print("Criando um ReleService com o titulo: " + String(getTitle().c_str()) + "... ");
   // Configura o pino do serviço para saída
   pinMode(getPin(), OUTPUT);
 

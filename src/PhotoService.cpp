@@ -21,7 +21,7 @@ PhotoService::PhotoService(unsigned char pin, unsigned int period, std::string t
  */
 void PhotoService::init()
 {
-  Serial.println("Criando o serviço " + String(getTitle().c_str()) + "... ");
+  Serial.print("Criando um PhotoService com o titulo: " + String(getTitle().c_str()) + "... ");
 
   // Cria um servidor BLE, caso o mesmo já não tenha sido criado.
   EasyBLE::createServer();
