@@ -15,7 +15,7 @@ PhotoService::PhotoService(unsigned char pin, std::string title, std::string sub
 PhotoService::PhotoService(unsigned char pin, unsigned int period, std::string title, std::string subtitle) : ServiceBase::ServiceBase(pin, period, title, subtitle) {}
 
 /**
- * @brief Inicializa todas as instancias BLE de PhotoService.
+ * @brief Inicializar o serviço.
  *
  * Método responsavel pela inicialização dos serviços, caracteristicas e descritores BLE.
  */
@@ -44,7 +44,7 @@ void PhotoService::init()
 }
 
 /**
- * @brief Atualiza o estado atual do serviço.
+ * @brief Atualizar o serviço.
  *
  * Método responsavel pela atualização do estado no serviço e no aplicativo, periodicamente.
  */

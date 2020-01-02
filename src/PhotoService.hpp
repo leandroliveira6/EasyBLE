@@ -6,8 +6,6 @@
  */
 class PhotoService : public ServiceBase<unsigned char>
 {
-  BLECharacteristic *_pCharacteristicValue;
-
 public:
   PhotoService(unsigned char pin);
   PhotoService(unsigned char pin, unsigned int period);
@@ -15,4 +13,7 @@ public:
   PhotoService(unsigned char pin, unsigned int period, std::string title, std::string subtitle);
   void init();
   void update();
+
+private:
+  BLECharacteristic *_pCharacteristicValue;
 };

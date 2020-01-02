@@ -22,19 +22,24 @@ ThermistorService::ThermistorService(unsigned char pin, unsigned int period, std
 }
 
 /**
- * @brief Inicializa o componente e todas as instancias BLE de ThermistorService.
+ * @brief Inicializar o serviço.
  *
  * Método responsavel pela inicialização dos serviços, caracteristicas e descritores BLE, além de inicializar o componente e calibrar a entrada.
  */
 void ThermistorService::init()
 {
-  Serial.println("Criando o serviço " + String(getTitle().c_str()) + "...");
+  Serial.println("Criando o serviço " + String(getTitle().c_str()) + "... ");
+
+  // Calibragem dos pinos de leitura analogicas para minimizar erros de leitura.
   esp_adc_cal_characterize(ADC_UNIT_1, ADC_ATTEN_DB_11, ADC_WIDTH_BIT_12, 1100, &_calibration); //Inicializa a estrutura de calibracao
 
+  // Cria um servidor BLE, caso o mesmo já não tenha sido criado.
   EasyBLE::createServer();
 
+  // Cria um serviço BLE, único para cada modulo de serviço implementado.
   BLEService *pService = EasyBLE::createService(getTitle(), getSubtitle());
 
+  // Cria uma caracteristica para atualização dos valores de estado exibidos no aplicativo.
   _pCharacteristicValue = EasyBLE::createCharacteristic(
       pService,
       "THERMISTOR Value (ºC)",
@@ -42,13 +47,14 @@ void ThermistorService::init()
       EasyBLE::PROPERTY_OUTPUT,
       NULL);
 
+  // Inicia o servidor BLE
   pService->start();
 
-  Serial.println("Serviço " + String(getTitle().c_str()) + " criado.");
+  Serial.println("criado.");
 }
 
 /**
- * @brief Atualiza o estado atual do serviço.
+ * @brief Atualizar o serviço.
  *
  * Método responsavel pela atualização do estado no serviço e no aplicativo, periodicamente.
  */
@@ -72,9 +78,12 @@ void ThermistorService::update()
 }
 
 /**
- * @brief Reconfigura o componente.
+ * @brief Configurar valores opcionais do serviço.
  *
- * Método responsavel pela reconfiguração das variaveis do componente.
+ * Método responsavel pelo ajuste das variáveis de medição e cálculo dos valores do componente.
+ * @param [in] beta Coeficiente beta do thermistor. O valor padrão é 3950.
+ * @param [in] maxVoltage Voltagem maxima lida no pino. O valor padrão é 5000 [mV]. 
+ * @param [in] maxSamples Numero maximo de amostras para o calculo da temperatura media.
  */
 void ThermistorService::setOptionals(unsigned short beta, unsigned short maxVoltage, unsigned short maxSamples)
 {

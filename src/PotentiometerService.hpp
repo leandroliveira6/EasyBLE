@@ -6,8 +6,6 @@
  */
 class PotentiometerService : public ServiceBase<unsigned char>
 {
-  BLECharacteristic *_pCharacteristicValue;
-
 public:
   PotentiometerService(unsigned char pin);
   PotentiometerService(unsigned char pin, unsigned int period);
@@ -16,4 +14,7 @@ public:
   void init();
   void update();
   BLECharacteristic *getCharacteristicValue();
+
+private:
+  BLECharacteristic *_pCharacteristicValue;
 };

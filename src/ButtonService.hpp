@@ -6,8 +6,6 @@
  */
 class ButtonService : public ServiceBase<int>
 {
-  BLECharacteristic *_pCharacteristicValue;
-
 public:
   ButtonService(unsigned char pin);
   ButtonService(unsigned char pin, unsigned int period);
@@ -16,4 +14,7 @@ public:
   void init();
   void update();
   BLECharacteristic *getCharacteristicValue();
+
+private:
+  BLECharacteristic *_pCharacteristicValue;
 };

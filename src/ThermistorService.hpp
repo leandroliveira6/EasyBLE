@@ -12,14 +12,6 @@
  */
 class ThermistorService : public ServiceBase<float>
 {
-  BLECharacteristic *_pCharacteristicValue;
-  unsigned short _beta;
-  unsigned short _maxVoltage;
-  unsigned short _maxSamples;
-  unsigned short _nSamples;
-  unsigned int _sumSamples;
-  esp_adc_cal_characteristics_t _calibration;
-
 public:
   ThermistorService(unsigned char pin);
   ThermistorService(unsigned char pin, unsigned int period);
@@ -28,4 +20,13 @@ public:
   void init();
   void update();
   void setOptionals(unsigned short beta = DEFAULT_BETA, unsigned short maxVoltage = DEFAULT_MAX_VOLTAGE, unsigned short maxSamples = DEFAULT_MAX_SAMPLES);
+
+private:
+  BLECharacteristic *_pCharacteristicValue;
+  unsigned short _beta;
+  unsigned short _maxVoltage;
+  unsigned short _maxSamples;
+  unsigned short _nSamples;
+  unsigned int _sumSamples;
+  esp_adc_cal_characteristics_t _calibration;
 };

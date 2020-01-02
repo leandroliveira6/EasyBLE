@@ -1,5 +1,9 @@
 #include "LedService.hpp"
 
+/**
+ * @brief Protótipo da função callback do serviço.
+ * 
+ */
 void ledControlCallback(void *pObject, BLECharacteristic *pCharacteristic);
 
 /**
@@ -17,7 +21,7 @@ LedService::LedService(unsigned char pin, std::string title, std::string subtitl
 LedService::LedService(unsigned char pin, unsigned int period, std::string title, std::string subtitle) : ServiceBase::ServiceBase(pin, period, title, subtitle) {}
 
 /**
- * @brief Inicializa o componente e todas as instancias BLE de ButtonService.
+ * @brief Inicializar o serviço.
  *
  * Método responsavel pela inicialização dos serviços, caracteristicas e descritores BLE, além de inicializar o componente.
  */
@@ -60,7 +64,7 @@ void LedService::init()
 };
 
 /**
- * @brief Atualiza o estado atual do serviço.
+ * @brief Atualizar o serviço.
  *
  * Método responsavel pela atualização do estado no serviço e no aplicativo, periodicamente, alem de atualizar o estado no componente.
  */
@@ -74,9 +78,10 @@ void LedService::update()
 }
 
 /**
- * @brief Obtem uma referencia da caracteristica BLE de atualização do estado do serviço.
+ * @brief Obter a caracteristica de escrita de valores.
  *
  * Método para obtenção de uma referencia da caracteristica BLE que possibilita atualizar o estado do serviço no aplicativo.
+ * @return Uma referencia para o objeto da caracteristica BLE.
  */
 BLECharacteristic *LedService::getCharacteristicValue()
 {
@@ -88,7 +93,7 @@ BLECharacteristic *LedService::getCharacteristicValue()
  *
  * Função callback acionada a cada nova escrita na caracteristica que a contiver. Alem de receber o conteúdo escrito, tambem atualiza o estado do serviço.
  * @param [in] pObject Referencia do serviço da caracteristica.
- * @param [in] pCallback Função callback chamada a cada escrita na caracteristica.
+ * @param [in] pCharacteristic Referencia da caracteristica que recebeu a escrita.
  */
 void ledControlCallback(void *pObject, BLECharacteristic *pCharacteristic)
 {

@@ -14,6 +14,12 @@ EasyBLECharacteristicCallback::EasyBLECharacteristicCallback(void *pObject, void
   _pCallback = pCallback;
 }
 
+/**
+ * @brief Método callback acionado a cada nova escrita na caracteristica.
+ *
+ * Método callback responsavel por receber a escrita efetuada pelo cliente BLE.
+ * @param [in] pCharacteristic Referencia da caracteristica que recebeu a escrita.
+ */
 void EasyBLECharacteristicCallback::onWrite(BLECharacteristic *pCharacteristic)
 {
   EasyBLECharacteristicCallback::_pCallback(_pObject, pCharacteristic);

@@ -1,5 +1,9 @@
 #include "ButtonService.hpp"
 
+/**
+ * @brief Protótipos das funções callback do serviço.
+ * 
+ */
 void buttonControlCallback(void *pObject, BLECharacteristic *pCharacteristic);
 void IRAM_ATTR buttonCallback(void *pObject);
 
@@ -18,7 +22,7 @@ ButtonService::ButtonService(unsigned char pin, std::string title, std::string s
 ButtonService::ButtonService(unsigned char pin, unsigned int period, std::string title, std::string subtitle) : ServiceBase::ServiceBase(pin, period, title, subtitle) {}
 
 /**
- * @brief Inicializa o componente e todas as instancias BLE.
+ * @brief Inicializar o serviço.
  *
  * Método responsavel pela inicialização dos serviços, caracteristicas e descritores BLE, além de inicializar o componente.
  */
@@ -27,7 +31,7 @@ void ButtonService::init()
   Serial.println("Criando o serviço " + String(getTitle().c_str()) + "... ");
 
   // Configura o pino do serviço para para receber eventos de entrada.
-  gpio_set_direction((gpio_num_t)getPin(), GPIO_MODE_INPUT); // Modo de entrada
+  gpio_set_direction((gpio_num_t)getPin(), GPIO_MODE_INPUT);   // Modo de entrada
   gpio_set_intr_type((gpio_num_t)getPin(), GPIO_INTR_NEGEDGE); // Falling edge
   gpio_install_isr_service(0);
   gpio_isr_handler_add((gpio_num_t)getPin(), buttonCallback, this); // Adiciona um callback para eventos no pino
@@ -64,7 +68,7 @@ void ButtonService::init()
 };
 
 /**
- * @brief Atualiza o estado atual do serviço.
+ * @brief Atualizar o serviço.
  *
  * Método responsavel pela atualização do estado no aplicativo periodicamente.
  */
@@ -77,9 +81,10 @@ void ButtonService::update()
 }
 
 /**
- * @brief Obtem uma referencia da caracteristica BLE de atualização do estado do serviço.
+ * @brief Obter a caracteristica de escrita de valores.
  *
  * Método para obtenção de uma referencia da caracteristica BLE que possibilita atualizar o estado do serviço no aplicativo.
+ * @return Uma referencia para o objeto da caracteristica BLE.
  */
 BLECharacteristic *ButtonService::getCharacteristicValue()
 {
@@ -91,7 +96,7 @@ BLECharacteristic *ButtonService::getCharacteristicValue()
  *
  * Função callback acionada a cada nova escrita na caracteristica que a contiver. Alem de receber o conteúdo escrito, tambem atualiza o estado no serviço e no aplicativo.
  * @param [in] pObject Referencia do serviço da caracteristica.
- * @param [in] pCallback Função callback chamada a cada escrita na caracteristica.
+ * @param [in] pCharacteristic Referencia da caracteristica que recebeu a escrita.
  */
 void buttonControlCallback(void *pObject, BLECharacteristic *pCharacteristic)
 {

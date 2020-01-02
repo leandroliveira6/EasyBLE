@@ -1,5 +1,9 @@
 #include "ReleService.hpp"
 
+/**
+ * @brief Protótipo da função callback do serviço.
+ * 
+ */
 void releControlCallback(void *pObject, BLECharacteristic *pCharacteristic);
 
 /**
@@ -17,23 +21,23 @@ ReleService::ReleService(unsigned char pin, std::string title, std::string subti
 ReleService::ReleService(unsigned char pin, unsigned int period, std::string title, std::string subtitle) : ServiceBase::ServiceBase(pin, period, title, subtitle) {}
 
 /**
- * @brief Inicializa o componente e todas as instancias BLE de ReleService.
+ * @brief Inicializar o serviço.
  *
  * Método responsavel pela inicialização dos serviços, caracteristicas e descritores BLE, além de inicializar o componente.
  */
 void ReleService::init()
 {
-  Serial.println("Criando o serviço " + String(getTitle().c_str()) + "...");
-// Configura o pino do serviço para saída
+  Serial.println("Criando o serviço " + String(getTitle().c_str()) + "... ");
+  // Configura o pino do serviço para saída
   pinMode(getPin(), OUTPUT);
 
-// Cria um servidor BLE, caso o mesmo já não tenha sido criado.
+  // Cria um servidor BLE, caso o mesmo já não tenha sido criado.
   EasyBLE::createServer();
 
-// Cria um serviço BLE, único para cada modulo de serviço implementado.
+  // Cria um serviço BLE, único para cada modulo de serviço implementado.
   BLEService *pService = EasyBLE::createService(getTitle(), getSubtitle());
 
-// Cria uma caracteristica para atualização dos valores de estado exibidos no aplicativo.
+  // Cria uma caracteristica para atualização dos valores de estado exibidos no aplicativo.
   _pCharacteristicValue = EasyBLE::createCharacteristic(
       pService,
       "RELÉ State",
@@ -41,7 +45,7 @@ void ReleService::init()
       EasyBLE::PROPERTY_OUTPUT,
       NULL);
 
-// Cria uma caracteristica para atualização dos valores de estado exibidos no aplicativo.
+  // Cria uma caracteristica para atualização dos valores de estado exibidos no aplicativo.
   EasyBLE::createCharacteristic(
       pService,
       "RELÉ Control",
@@ -49,17 +53,17 @@ void ReleService::init()
       EasyBLE::PROPERTY_SWITCH,
       new EasyBLECharacteristicCallback(this, releControlCallback));
 
-// Inicia o servidor BLE
+  // Inicia o servidor BLE
   pService->start();
 
-// Inicializa o estado do serviço.
+  // Inicializa o estado do serviço.
   setState(STATE_OFF);
 
-  Serial.println("Serviço " + String(getTitle().c_str()) + " criado.");
+  Serial.println("criado.");
 };
 
 /**
- * @brief Atualiza o estado atual do serviço.
+ * @brief Atualizar o serviço.
  *
  * Método responsavel pela atualização do estado no serviço e no aplicativo, periodicamente, alem de atualizar o estado no componente.
  */
@@ -73,9 +77,10 @@ void ReleService::update()
 };
 
 /**
- * @brief Obtem uma referencia da caracteristica BLE de atualização do estado do serviço.
+ * @brief Obter a caracteristica de escrita de valores.
  *
  * Método para obtenção de uma referencia da caracteristica BLE que possibilita atualizar o estado do serviço no aplicativo.
+ * @return Uma referencia para o objeto da caracteristica BLE.
  */
 BLECharacteristic *ReleService::getCharacteristicValue()
 {
@@ -87,7 +92,7 @@ BLECharacteristic *ReleService::getCharacteristicValue()
  *
  * Função callback acionada a cada nova escrita na caracteristica que a contiver. Alem de receber o conteúdo escrito, tambem atualiza o estado do serviço.
  * @param [in] pObject Referencia do serviço da caracteristica.
- * @param [in] pCallback Função callback chamada a cada escrita na caracteristica.
+ * @param [in] pCharacteristic Referencia da caracteristica que recebeu a escrita.
  */
 void releControlCallback(void *pObject, BLECharacteristic *pCharacteristic)
 {

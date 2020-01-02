@@ -11,9 +11,6 @@
  */
 class ServoService : public ServiceBase<unsigned char>
 {
-  BLECharacteristic *_pCharacteristicValue;
-  Servo _servo;
-
 public:
   ServoService(unsigned char pin);
   ServoService(unsigned char pin, unsigned int period);
@@ -23,4 +20,8 @@ public:
   void update();
   void setOptionals(unsigned short minPulseWidth = DEFAULT_MIN_PULSE, unsigned short maxPulseWidth = DEFAULT_MAX_PULSE);
   BLECharacteristic *getCharacteristicValue();
+
+private:
+  BLECharacteristic *_pCharacteristicValue;
+  Servo _servo;
 };

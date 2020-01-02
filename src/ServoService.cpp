@@ -1,5 +1,9 @@
 #include "ServoService.hpp"
 
+/**
+ * @brief Protótipo da função callback do serviço.
+ * 
+ */
 void servoControlCallback(void *pObject, BLECharacteristic *pCharacteristic);
 
 /**
@@ -17,20 +21,26 @@ ServoService::ServoService(unsigned char pin, std::string title, std::string sub
 ServoService::ServoService(unsigned char pin, unsigned int period, std::string title, std::string subtitle) : ServiceBase::ServiceBase(pin, period, title, subtitle) {}
 
 /**
- * @brief Inicializa o componente e todas as instancias BLE de ServoService.
+ * @brief Inicializar o serviço.
  *
  * Método responsavel pela inicialização dos serviços, caracteristicas e descritores BLE, além de inicializar o componente. 
  * Outras configurações podem ser feitas pelo método setOptionals.
  */
 void ServoService::init()
 {
-  Serial.println("Criando o serviço " + String(getTitle().c_str()) + "...");
-  _servo.setPeriodHertz(10); // Standard 50hz servo
+  Serial.println("Criando o serviço " + String(getTitle().c_str()) + "... ");
+
+  // Configura uma instancia de uma biblioteca externa de controle de servomotores.
+  _servo.setPeriodHertz(10); // 10Hz
   _servo.attach(getPin(), DEFAULT_MIN_PULSE, DEFAULT_MAX_PULSE);
 
+  // Cria um servidor BLE, caso o mesmo já não tenha sido criado.
   EasyBLE::createServer();
+
+  // Cria um serviço BLE, único para cada modulo de serviço implementado.
   BLEService *pService = EasyBLE::createService(getTitle(), getSubtitle());
 
+  // Cria uma caracteristica para atualização dos valores de estado exibidos no aplicativo.
   _pCharacteristicValue = EasyBLE::createCharacteristic(
       pService,
       "SERVO State",
@@ -38,6 +48,7 @@ void ServoService::init()
       EasyBLE::PROPERTY_OUTPUT,
       NULL);
 
+  // Cria uma caracteristica para controle dos valores de estado do serviço.
   EasyBLE::createCharacteristic(
       pService,
       "SERVO Control",
@@ -45,15 +56,17 @@ void ServoService::init()
       EasyBLE::PROPERTY_INPUT,
       new EasyBLECharacteristicCallback(this, servoControlCallback));
 
+  // Inicia o servidor BLE
   pService->start();
 
+  // Inicializa o estado do serviço.
   setState(0);
 
-  Serial.println("Serviço " + String(getTitle().c_str()) + " criado.");
+  Serial.println("criado.");
 };
 
 /**
- * @brief Atualiza o estado atual do serviço.
+ * @brief Atualizar o serviço.
  *
  * Método responsavel pela atualização do estado no serviço e no aplicativo, periodicamente, alem de atualizar o estado no componente.
  */
@@ -67,9 +80,11 @@ void ServoService::update()
 };
 
 /**
- * @brief Reconfigura o componente.
+ * @brief Configurar valores opcionais do serviço.
  *
- * Método responsavel pela reconfiguração do componente.
+ * Método responsavel pelo ajuste das variáveis de medição e cálculo dos valores do componente.
+ * @param [in] minPulseWidth Tamanho minimo do pulso. O valor padrão é 500.
+ * @param [in] maxPulseWidth Tamanho maximo do pulso. O valor padrão é 2400.
  */
 void ServoService::setOptionals(unsigned short minPulseWidth, unsigned short maxPulseWidth)
 {
@@ -77,9 +92,10 @@ void ServoService::setOptionals(unsigned short minPulseWidth, unsigned short max
 }
 
 /**
- * @brief Obtem uma referencia da caracteristica BLE de atualização do estado do serviço.
+ * @brief Obter a caracteristica de escrita de valores.
  *
  * Método para obtenção de uma referencia da caracteristica BLE que possibilita atualizar o estado do serviço no aplicativo.
+ * @return Uma referencia para o objeto da caracteristica BLE.
  */
 BLECharacteristic *ServoService::getCharacteristicValue()
 {
@@ -91,7 +107,7 @@ BLECharacteristic *ServoService::getCharacteristicValue()
  *
  * Função callback acionada a cada nova escrita na caracteristica que a contiver. Alem de receber o conteúdo escrito, tambem atualiza o estado do serviço.
  * @param [in] pObject Referencia do serviço da caracteristica.
- * @param [in] pCallback Função callback chamada a cada escrita na caracteristica.
+ * @param [in] pCharacteristic Referencia da caracteristica que recebeu a escrita.
  */
 void servoControlCallback(void *pObject, BLECharacteristic *pCharacteristic)
 {

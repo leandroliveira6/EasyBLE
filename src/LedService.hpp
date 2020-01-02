@@ -9,8 +9,6 @@
  */
 class LedService : public ServiceBase<String>
 {
-  BLECharacteristic *_pCharacteristicValue;
-
 public:
   LedService(unsigned char pin);
   LedService(unsigned char pin, unsigned int period);
@@ -19,4 +17,7 @@ public:
   void init();
   void update();
   BLECharacteristic *getCharacteristicValue();
+
+private:
+  BLECharacteristic *_pCharacteristicValue;
 };

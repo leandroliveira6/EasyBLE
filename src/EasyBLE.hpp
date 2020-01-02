@@ -12,11 +12,6 @@
  */
 class EasyBLE
 {
-  static unsigned short _nUuids;
-  static bool _deviceConnected;
-  static BLEServer *_pServer;
-  // static std::mutex _mutex;
-
 public:
   static const short int PROPERTY_INPUT = 0;  // recebe dados
   static const short int PROPERTY_OUTPUT = 1; // envia dados
@@ -30,4 +25,10 @@ public:
   static void changeConnection(bool newConnectionState);
   static bool isConnected();
   static BLEUUID getNewUUID();
+
+private:
+  static unsigned short _nUuids;
+  static bool _deviceConnected;
+  static BLEServer *_pServer;
+  // static std::mutex _mutex;
 };

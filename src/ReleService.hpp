@@ -9,8 +9,6 @@
  */
 class ReleService : public ServiceBase<String>
 {
-  BLECharacteristic *_pCharacteristicValue;
-
 public:
   ReleService(unsigned char pin);
   ReleService(unsigned char pin, unsigned int period);
@@ -19,4 +17,7 @@ public:
   void init();
   void update();
   BLECharacteristic *getCharacteristicValue();
+
+private:
+  BLECharacteristic *_pCharacteristicValue;
 };

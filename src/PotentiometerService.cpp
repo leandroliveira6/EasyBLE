@@ -15,13 +15,13 @@ PotentiometerService::PotentiometerService(unsigned char pin, std::string title,
 PotentiometerService::PotentiometerService(unsigned char pin, unsigned int period, std::string title, std::string subtitle) : ServiceBase::ServiceBase(pin, period, title, subtitle) {}
 
 /**
- * @brief Inicializa todas as instancias BLE de PotentiometerService.
+ * @brief Inicializar o serviço.
  *
  * Método responsavel pela inicialização dos serviços, caracteristicas e descritores BLE.
  */
 void PotentiometerService::init()
 {
-  Serial.println("Criando o serviço " + String(getTitle().c_str()) + "...");
+  Serial.println("Criando o serviço " + String(getTitle().c_str()) + "... ");
 
   // Cria um servidor BLE, caso o mesmo já não tenha sido criado.
   EasyBLE::createServer();
@@ -40,11 +40,11 @@ void PotentiometerService::init()
   // Inicia o servidor BLE
   pService->start();
 
-  Serial.println("Serviço " + String(getTitle().c_str()) + " criado.");
+  Serial.println("criado.");
 }
 
 /**
- * @brief Atualiza o estado atual do serviço.
+ * @brief Atualizar o serviço.
  *
  * Método responsavel pela atualização do estado no serviço e no aplicativo, periodicamente.
  */
