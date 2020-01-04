@@ -22,7 +22,7 @@ public:
   void setOptionals(unsigned short beta = DEFAULT_BETA, unsigned short maxVoltage = DEFAULT_MAX_VOLTAGE, unsigned short maxSamples = DEFAULT_MAX_SAMPLES);
 
 private:
-  BLECharacteristic *_pCharacteristicValue;
+  BLECharacteristic *_pCharacteristicState;
   unsigned short _beta;
   unsigned short _maxVoltage;
   unsigned short _maxSamples;

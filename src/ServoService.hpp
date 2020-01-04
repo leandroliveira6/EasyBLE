@@ -19,9 +19,9 @@ public:
   void init();
   void update();
   void setOptionals(unsigned short minPulseWidth = DEFAULT_MIN_PULSE, unsigned short maxPulseWidth = DEFAULT_MAX_PULSE);
-  BLECharacteristic *getCharacteristicValue();
+  BLECharacteristic *getCharacteristicState();
 
 private:
-  BLECharacteristic *_pCharacteristicValue;
+  BLECharacteristic *_pCharacteristicState;
   Servo _servo;
 };

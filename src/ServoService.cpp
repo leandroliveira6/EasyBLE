@@ -41,7 +41,7 @@ void ServoService::init()
   BLEService *pService = EasyBLE::createService(getTitle(), getSubtitle());
 
   // Cria uma caracteristica para atualização dos valores de estado exibidos no aplicativo.
-  _pCharacteristicValue = EasyBLE::createCharacteristic(
+  _pCharacteristicState = EasyBLE::createCharacteristic(
       pService,
       "SERVO State",
       "Exibição do angulo atual do servo",
@@ -74,7 +74,7 @@ void ServoService::update()
 {
   if (isReady(true))
   {
-    publishState(_pCharacteristicValue);
+    publishState(_pCharacteristicState);
     _servo.write(getState());
   }
 };
@@ -97,9 +97,9 @@ void ServoService::setOptionals(unsigned short minPulseWidth, unsigned short max
  * Método para obtenção de uma referencia da caracteristica BLE que possibilita atualizar o estado do serviço no aplicativo.
  * @return Uma referencia para o objeto da caracteristica BLE.
  */
-BLECharacteristic *ServoService::getCharacteristicValue()
+BLECharacteristic *ServoService::getCharacteristicState()
 {
-  return _pCharacteristicValue;
+  return _pCharacteristicState;
 }
 
 /**

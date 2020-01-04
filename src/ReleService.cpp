@@ -38,7 +38,7 @@ void ReleService::init()
   BLEService *pService = EasyBLE::createService(getTitle(), getSubtitle());
 
   // Cria uma caracteristica para atualização dos valores de estado exibidos no aplicativo.
-  _pCharacteristicValue = EasyBLE::createCharacteristic(
+  _pCharacteristicState = EasyBLE::createCharacteristic(
       pService,
       "RELÉ State",
       "Exibição do estado do relé",
@@ -71,7 +71,7 @@ void ReleService::update()
 {
   if (isReady(true))
   {
-    publishState(_pCharacteristicValue);
+    publishState(_pCharacteristicState);
     digitalWrite(getPin(), getState() == STATE_ON ? HIGH : LOW);
   }
 };
@@ -82,9 +82,9 @@ void ReleService::update()
  * Método para obtenção de uma referencia da caracteristica BLE que possibilita atualizar o estado do serviço no aplicativo.
  * @return Uma referencia para o objeto da caracteristica BLE.
  */
-BLECharacteristic *ReleService::getCharacteristicValue()
+BLECharacteristic *ReleService::getCharacteristicState()
 {
-  return _pCharacteristicValue;
+  return _pCharacteristicState;
 }
 
 /**
@@ -103,6 +103,6 @@ void releControlCallback(void *pObject, BLECharacteristic *pCharacteristic)
   {
     Serial.println("Valor recebido: " + String(value.c_str()));
     pReleService->setState(value == "on" ? STATE_ON : STATE_OFF);
-    pReleService->publishState(pReleService->getCharacteristicValue());
+    pReleService->publishState(pReleService->getCharacteristicState());
   }
 }

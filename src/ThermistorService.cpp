@@ -40,7 +40,7 @@ void ThermistorService::init()
   BLEService *pService = EasyBLE::createService(getTitle(), getSubtitle());
 
   // Cria uma caracteristica para atualização dos valores de estado exibidos no aplicativo.
-  _pCharacteristicValue = EasyBLE::createCharacteristic(
+  _pCharacteristicState = EasyBLE::createCharacteristic(
       pService,
       "THERMISTOR Value (ºC)",
       "Temperatura ambiente",
@@ -71,7 +71,7 @@ void ThermistorService::update()
     {
       float tInv = 1.0 / (25.0 + zeroCelciusInKelvin) + 2.3 / (float)_beta * log((float)_maxVoltage / ((float)_sumSamples / (float)_maxSamples) - 1.0);
       setState(1.0 / tInv - zeroCelciusInKelvin);
-      publishState(_pCharacteristicValue);
+      publishState(_pCharacteristicState);
       _nSamples = _sumSamples = 0;
     }
   }

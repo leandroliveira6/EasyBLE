@@ -43,7 +43,7 @@ void ButtonService::init()
   BLEService *pService = EasyBLE::createService(getTitle(), getSubtitle());
 
   // Cria uma caracteristica para atualização dos valores de estado exibidos no aplicativo.
-  _pCharacteristicValue = EasyBLE::createCharacteristic(
+  _pCharacteristicState = EasyBLE::createCharacteristic(
       pService,
       "BUTTON Click Count",
       "Exibe a quantidade de clicks no botão",
@@ -76,7 +76,7 @@ void ButtonService::update()
 {
   if (isReady())
   {
-    publishState(_pCharacteristicValue);
+    publishState(_pCharacteristicState);
   }
 }
 
@@ -86,9 +86,9 @@ void ButtonService::update()
  * Método para obtenção de uma referencia da caracteristica BLE que possibilita atualizar o estado do serviço no aplicativo.
  * @return Uma referencia para o objeto da caracteristica BLE.
  */
-BLECharacteristic *ButtonService::getCharacteristicValue()
+BLECharacteristic *ButtonService::getCharacteristicState()
 {
-  return _pCharacteristicValue;
+  return _pCharacteristicState;
 }
 
 /**
@@ -107,7 +107,7 @@ void buttonControlCallback(void *pObject, BLECharacteristic *pCharacteristic)
   {
     Serial.println("Valor recebido: " + String(value.c_str()));
     pButtonService->setState(String(value.c_str()).toInt());
-    pButtonService->publishState(pButtonService->getCharacteristicValue());
+    pButtonService->publishState(pButtonService->getCharacteristicState());
   }
 }
 
@@ -122,5 +122,5 @@ void IRAM_ATTR buttonCallback(void *pObject)
   ButtonService *pButtonService = (ButtonService *)pObject;
   int state = pButtonService->getState();
   pButtonService->setState(++state);
-  pButtonService->publishState(pButtonService->getCharacteristicValue());
+  pButtonService->publishState(pButtonService->getCharacteristicState());
 }

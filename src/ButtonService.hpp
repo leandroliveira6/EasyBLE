@@ -13,8 +13,8 @@ public:
   ButtonService(unsigned char pin, unsigned int period, std::string title, std::string subtitle);
   void init();
   void update();
-  BLECharacteristic *getCharacteristicValue();
+  BLECharacteristic *getCharacteristicState();
 
 private:
-  BLECharacteristic *_pCharacteristicValue;
+  BLECharacteristic *_pCharacteristicState;
 };

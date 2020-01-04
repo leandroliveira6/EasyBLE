@@ -15,5 +15,5 @@ public:
   void update();
 
 private:
-  BLECharacteristic *_pCharacteristicValue;
+  BLECharacteristic *_pCharacteristicState;
 };

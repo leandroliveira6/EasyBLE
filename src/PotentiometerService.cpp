@@ -30,7 +30,7 @@ void PotentiometerService::init()
   BLEService *pService = EasyBLE::createService(getTitle(), getSubtitle());
 
   // Cria uma caracteristica para atualização dos valores de estado exibidos no aplicativo.
-  _pCharacteristicValue = EasyBLE::createCharacteristic(
+  _pCharacteristicState = EasyBLE::createCharacteristic(
       pService,
       "POTENTIOMETER Value (%)",
       "Taxa de resistencia do potenciômetro",
@@ -53,6 +53,6 @@ void PotentiometerService::update()
   if (isReady())
   {
     setState(map(analogRead(getPin()), 0, 4095, 0, 100));
-    publishState(_pCharacteristicValue);
+    publishState(_pCharacteristicState);
   }
 }
