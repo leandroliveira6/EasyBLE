@@ -16,6 +16,8 @@ class ServiceBase
 {
 public:
   ServiceBase(unsigned char pin, unsigned int period, std::string name, std::string description);
+  virtual void init() = 0;
+  virtual void update() = 0;
   unsigned char getPin();
   std::string getTitle();
   std::string getSubtitle();
@@ -52,6 +54,24 @@ ServiceBase<T>::ServiceBase(unsigned char pin, unsigned int period, std::string 
   _period = period;
   _lastMillis = millis();
 }
+
+/**
+ * @brief Iniciar o serviço.
+ *
+ * Método responsavel pela inicialização do serviço e das caracteristicas GATT. 
+ * É nele, também, que se inicializa os componentes eletrônicos.
+ */
+template <class T>
+void ServiceBase<T>::init() {}
+
+/**
+ * @brief Atualizar o serviço.
+ *
+ * Método responsavel pela atualização do serviço e caracteristicas GATT. 
+ * É nele, também, que se atualiza o estado dos componentes eletrônicos.
+ */
+template <class T>
+void ServiceBase<T>::update() {}
 
 /**
  * @brief Obter o pino do serviço.

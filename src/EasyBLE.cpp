@@ -68,7 +68,7 @@ BLEService *EasyBLE::createService(std::string title, std::string subtitle)
  * @param [in] callback A função callback que será acionada a cada escrita dos clientes na caracteristica.
  * @return Uma referencia para o objeto da caracteristica BLE criada.
  */
-BLECharacteristic *EasyBLE::createCharacteristic(BLEService *pService, std::string title, std::string subtitle, short int type, EasyBLECharacteristicCallback *callback)
+BLECharacteristic *EasyBLE::createCharacteristic(BLEService *pService, std::string title, std::string subtitle, unsigned char type, EasyBLECharacteristicCallback *callback)
 {
   BLECharacteristic *pCharacteristic = pService->createCharacteristic(EasyBLE::getNewUUID(), 0);
   addCharacteristicDetails(pCharacteristic, title, subtitle);
@@ -110,11 +110,11 @@ bool EasyBLE::isConnected()
  *
  * Método responsavel por manter atualizado o atual estado de conexão do dispositivo BLE. Ou seja, o dispositivo entra no estado de 
  * conectado ao estabelecer uma conexão com algum cliente e desconectado quando não há mais clientes conectados ao dispositivo.
- * @param [in] newConnectionState O novo estado de conexão. TRUE significa que um usuario se conectou e FALSE que se desconectou.
+ * @param [in] newConnection O novo estado de conexão. TRUE significa que um usuario se conectou e FALSE que se desconectou.
  */
-void EasyBLE::changeConnection(bool newConnectionState)
+void EasyBLE::changeConnection(bool newConnection)
 {
-  if (newConnectionState)
+  if (newConnection)
   {
     Serial.println("Um dispositivo foi conectado");
     EasyBLE::_deviceConnected = true;

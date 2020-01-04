@@ -13,7 +13,6 @@ public:
   PotentiometerService(unsigned char pin, unsigned int period, std::string title, std::string subtitle);
   void init();
   void update();
-  BLECharacteristic *getCharacteristicValue();
 
 private:
   BLECharacteristic *_pCharacteristicValue;
