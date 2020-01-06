@@ -48,7 +48,7 @@ BLEServer *EasyBLE::createServer()
  */
 BLEService *EasyBLE::createService(std::string title, std::string subtitle)
 {
-  BLEService *pService = EasyBLE::_pServer->createService(EasyBLE::getNewUUID());
+  BLEService *pService = EasyBLE::_pServer->createService(EasyBLE::getNewUUID(), 100);
   BLECharacteristic *pCharacteristic = pService->createCharacteristic(EasyBLE::getNewUUID(), BLECharacteristic::PROPERTY_READ);
   addCharacteristicDetails(pCharacteristic, title, subtitle);
   return pService;

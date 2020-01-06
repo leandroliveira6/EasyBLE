@@ -3,6 +3,7 @@
 
 #include "EasyBLE.hpp"
 
+#define DEFAULT_PIN 0xFF
 #define DEFAULT_PERIOD 1000
 #define DEFAULT_TITLE "Titulo não definido"
 #define DEFAULT_SUBTITLE "Subtitulo não definido"
